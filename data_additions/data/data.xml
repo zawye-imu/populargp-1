@@ -116,14 +116,26 @@
  <!--             Record rule assign -->
             
      <record model="ir.rule" id="sales_managers_rules1">
-             <field name="name">Own Team Report</field>
+             <field name="name">Own Team</field>
              <field name="model_id" ref="sales_team.model_crm_team"></field>
+             <field name="groups" eval="[(4,ref('sale_manager_group_1'))]"></field>
+             <field name="domain_force">[('team_id.user_id','=',user.id)]</field>
+             <field eval="1" name="perm_read"></field>   
+             <field eval="1" name="perm_write"></field> 
+             <field eval="1" name="perm_unlink"></field>
+             <field eval="1" name="perm_create"></field>
+     </record>  
+            
+            
+    <record model="ir.rule" id="sales_managers_rules2">
+             <field name="name">Own Sales Analysis Report</field>
+             <field name="model_id" ref="sale.model_sale_report"></field>
              <field name="groups" eval="[(4,ref('sale_manager_group_1'))]"></field>
              <field name="domain_force">['|',('user_id','=',False),('user_id','=',user.id)]</field>
              <field eval="1" name="perm_read"></field>   
-             <field eval="0" name="perm_write"></field> 
-             <field eval="0" name="perm_unlink"></field>
-             <field eval="0" name="perm_create"></field>
+             <field eval="1" name="perm_write"></field> 
+             <field eval="1" name="perm_unlink"></field>
+             <field eval="1" name="perm_create"></field>
      </record>  
             
  
