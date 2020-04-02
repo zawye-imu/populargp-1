@@ -4,6 +4,9 @@ from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_compare
 
 
+# import logging
+# _logger = logging.getLogger(__name__)
+
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
     
@@ -12,6 +15,7 @@ class PurchaseOrderLine(models.Model):
     @api.depends('product_qty', 'price_unit', 'taxes_id','p_discount')
     def _compute_amount(self):
         for line in self:
+            
             
             dis_per=line.p_discount/100
             
@@ -22,8 +26,15 @@ class PurchaseOrderLine(models.Model):
                 vals['product_qty'],
                 vals['product'],
                 vals['partner'])
+            
+            tax_percentage=0
+            if taxes['total_excluded'] != 0:
+                tax_percentage=(sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))*100)/taxes['total_excluded']
+            
+            tax_real=((taxes['total_excluded']-(taxes['total_excluded']*dis_per))/100)*tax_percentage
+            
             line.update({
-                'price_tax': sum(t.get('amount', 0.0) for t in taxes.get('taxes', [])),
+                'price_tax': tax_real,
                 'price_total': taxes['total_included'],
                 'price_subtotal': taxes['total_excluded']-(taxes['total_excluded']*dis_per),
             })
